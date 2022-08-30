@@ -1,0 +1,6 @@
+[submodule "planning"]
+	path = planning
+	url = git@github.com:Mattia2700/planning.git
+[submodule "navigation"]
+	path = navigation
+	url = git@github.com:Mattia2700/navigation.git

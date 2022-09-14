@@ -50,6 +50,15 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
       - /dev/dri/card0:/dev/dri/card0
 
+  map:
+    image: demo
+    network_mode: host
+    command: -c "cd navigation && make map"
+    environment:
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    volumes:
+      - .:/home/ros2
+
   navigation:
     image: demo
     network_mode: host

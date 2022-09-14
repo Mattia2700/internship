@@ -52,6 +52,6 @@ WORKDIR /home/ros2
 
 RUN sudo apt-get install -y rfkill
 
-RUN sudo apt-get install -y ros-foxy-joy
+RUN sudo apt-get install -y ros-foxy-joy ros-foxy-teleop-twist-joy
 
-ENTRYPOINT sh docker_entrypoint.sh
+ENTRYPOINT ["bash"]

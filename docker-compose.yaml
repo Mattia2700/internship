@@ -3,27 +3,12 @@ networks:
     external: true
     name: demo
 services:
-  bridge:
-    build: .
-    command: -c "cd robot && make bridge"
+  map:
+    command: -c "cd navigation && make map"
+    environment:
+    - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
     image: demo
     network_mode: host
-    restart: unless-stopped
-    volumes:
-    - .:/home/ros2
-  robot:
-    command: -c "cd robot && make run"
-    depends_on:
-      ros1-build:
-        condition: service_completed_successfully
-    image: demo
-    network_mode: host
-    restart: unless-stopped
-    volumes:
-    - .:/home/ros2
-  ros1-build:
-    command: -c "cd robot && make build"
-    image: demo
     volumes:
     - .:/home/ros2
 version: '3.8'

@@ -13,6 +13,8 @@ def __main__():
     parser.add_argument('-r','--robot', help='start robot nodes', action='store_true')
     parser.add_argument('-g','--gazebo', help='start simulation nodes', action='store_true')
 
+    parser.add_argument('-m','--map', help='save slam map', action='store_true')
+
     parser.add_argument('-n','--navigation', help='start navigation nodes', action='store_true')
     parser.add_argument('-s','--slam', help='start slam nodes', action='store_true')
     

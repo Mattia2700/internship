@@ -9,3 +9,4 @@
 .config
 .ignition
 .local
+docker-compose.yaml

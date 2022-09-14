@@ -10,6 +10,8 @@ def __main__():
     exclusive.add_argument('-b','--bridge', help='attach to ROS1-ROS2 bridge node', action='store_true')
     exclusive.add_argument('-g','--gazebo', help='attach to simulation container', action='store_true')
 
+    exclusive.add_argument('-m','--map', help='attach to map container', action='store_true')
+    
     exclusive.add_argument('-n','--navigation', help='attach to navigation container', action='store_true')
     exclusive.add_argument('-s','--slam', help='attach to slam container', action='store_true')
 

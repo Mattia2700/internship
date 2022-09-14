@@ -20,11 +20,9 @@ RUN apt-get install -y libgl1-mesa-glx libgl1-mesa-dri mesa-utils dbus
 
 RUN apt-get install -y nano python3-pip libzmq3-dev 
 
-RUN apt-get install -y file
+RUN apt-get install -y file bluez bluetooth
 
 RUN apt-get install -y build-essential cmake gdb coinor-libcbc-dev coinor-libclp-dev coinor-libcoinutils-dev coinor-libcgl-dev coinor-libcoinutils-dev libgsl-dev bison flex black
-  
-# RUN   apt-get -y install ros-noetic-depthimage-to-laserscan \
 
 RUN apt-get install -y \
   python3-colcon-common-extensions \
@@ -52,6 +50,8 @@ RUN useradd -ms /bin/bash -G sudo ros2
 USER ros2
 WORKDIR /home/ros2
 
-RUN echo '<?xml version="1.0" encoding="UTF-8" ?><profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"><transport_descriptors><transport_descriptor><transport_id>CustomUdpTransport</transport_id><type>UDPv4</type></transport_descriptor></transport_descriptors><participant profile_name="participant_profile" is_default_profile="true"><rtps><userTransports><transport_id>CustomUdpTransport</transport_id></userTransports><useBuiltinTransports>false</useBuiltinTransports></rtps></participant></profiles>' > fastrtps-profile.xml
+RUN sudo apt-get install -y rfkill
 
-ENTRYPOINT ["bash"]
+RUN sudo apt-get install -y ros-foxy-joy
+
+ENTRYPOINT sh docker_entrypoint.sh

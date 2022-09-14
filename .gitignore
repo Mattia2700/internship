@@ -1,8 +1,11 @@
+.bash_history
 .cache/
 .gazebo/
 .npm/
 .ros/
 .rviz2/
 .sdformat/
-
-
+.sudo_as_admin_successful
+.config
+.ignition
+.local

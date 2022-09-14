@@ -1,137 +1,29 @@
-version: "3.8"
-
-services: 
-
-  # ros1-build:
-  #   build: .
-  #   image: demo
-  #   command: -c "cd ~/workspace1 && make build"
-  #   volumes:
-  #     - ~/Desktop/tirocinio/robot:~/workspace1
-
-  # shelfino:
-  #   build: .
-  #   image: demo
-  #   restart: unless-stopped
-  #   network_mode: host
-  #   command: -c "cd ~/workspace1 && make run"
-  #   depends_on:
-  #     - ros1-build
-  #   volumes:
-  #     - ~/Desktop/tirocinio/robot:~/workspace1
-
-  # bridge:
-  #  build: .
-  #  image: demo
-  #  restart: unless-stopped
-  #  network_mode: host
-  #  command: -c "cd ~/robot && make bridge"
-  #  volumes:
-  #    - ~/Desktop/tirocinio/demo:/home/ros2
-
-  ros2-build-navigation:
+networks:
+  default:
+    external: true
+    name: demo
+services:
+  bridge:
     build: .
+    command: -c "cd robot && make bridge"
     image: demo
-    command: -c "cd ~/navigation && make build"
-    volumes:
-      - ~/Desktop/tirocinio/demo:/home/ros2
-
-  # slam:
-  #   build: .
-  #   image: demo
-  #   restart: unless-stopped
-  #   network_mode: host
-  #   command: -c "cd ~/navigation && make slam"
-  #   depends_on: 
-  #     ros2-build-navigation:
-  #       condition: service_completed_successfully
-  #   environment:
-  #     - DISPLAY=:0
-  #     - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
-  #   volumes:
-  #     - ~/Desktop/tirocinio/demo:/home/ros2
-  #     - /tmp/.X11-unix:/tmp/.X11-unix:ro
-  #     - /dev/dri/card0:/dev/dri/card0
-
-  lidar:
-    build: .
-    image: demo
-    restart: unless-stopped
     network_mode: host
-    command: -c "cd ~/navigation && make lidar"
-    environment:
-      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
-    volumes:
-      - ~/Desktop/tirocinio/demo:/home/ros2
-
-  navigation:
-    build: .
-    image: demo
     restart: unless-stopped
-    network_mode: host
-    command: -c "cd ~/navigation && make navigation"
-    depends_on: 
-      ros2-build-navigation:
+    volumes:
+    - .:/home/ros2
+  robot:
+    command: -c "cd robot && make run"
+    depends_on:
+      ros1-build:
         condition: service_completed_successfully
-      lidar:
-        condition: service_started
-    environment:
-      - DISPLAY=:0
-      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    image: demo
+    network_mode: host
+    restart: unless-stopped
     volumes:
-      - ~/Desktop/tirocinio/demo:/home/ros2
-      - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      - /dev/dri/card0:/dev/dri/card0
-
-  # planning-bridge:
-  #   image: demo
-  #   restart: unless-stopped
-  #   network_mode: host
-  #   command: -c "cd ~/navigation && sleep 10 && make planning"
-  #   depends_on:
-  #     ros2-build-navigation:
-  #       condition: service_completed_successfully
-  #     navigation:
-  #       condition: service_started
-  #     planning:
-  #       condition: service_started
-  #   environment:
-  #     - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
-  #   volumes:
-  #     - ~/Desktop/tirocinio/demo:/home/ros2
-
-
-  # ros2-build-planning:
-  #   build: .
-  #   image: demo
-  #   command: -c "cd ~/planning && make build"
-  #   volumes:
-  #     - ~/Desktop/tirocinio/demo:/home/ros2
-
-  # planning:
-  #   build: .
-  #   image: demo
-  #   restart: unless-stopped
-  #   network_mode: host
-  #   command: -c "cd ~/planning && make run"
-  #   depends_on:
-  #     ros2-build-planning:
-  #       condition: service_completed_successfully
-  #   environment:
-  #     - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
-  #   volumes:
-  #     - ~/Desktop/tirocinio/demo:/home/ros2
-
-  # webserver:
-  #   build: .
-  #   image: demo
-  #   restart: unless-stopped
-  #   network_mode: host
-  #   command: -c "cd ~/planning && make webserver"
-  #   volumes:
-  #     - ~/Desktop/tirocinio/demo:/home/ros2
-
-networks: 
-  default: 
-    external: 
-      name: demo
+    - .:/home/ros2
+  ros1-build:
+    command: -c "cd robot && make build"
+    image: demo
+    volumes:
+    - .:/home/ros2
+version: '3.8'

@@ -1,0 +1,130 @@
+version: "3.8"
+
+services: 
+
+  ros1-build:
+    image: demo
+    command: -c "cd robot && make build"
+    volumes:
+      - .:/home/ros2
+
+  robot:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd robot && make run"
+    depends_on:
+      ros1-build:
+        condition: service_completed_successfully
+    volumes:
+      - .:/home/ros2
+
+  bridge:
+   build: .
+   image: demo
+   network_mode: host
+   restart: unless-stopped
+   command: -c "cd robot && make bridge"
+   volumes:
+     - .:/home/ros2
+
+  ros2-build-navigation:
+    image: demo
+    command: -c "cd navigation && make build"
+    volumes:
+      - .:/home/ros2
+
+  slam:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd navigation && make slam"
+    depends_on: 
+      ros2-build-navigation:
+        condition: service_completed_successfully
+    environment:
+      - DISPLAY=:0
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    volumes:
+      - .:/home/ros2
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /dev/dri/card0:/dev/dri/card0
+
+  navigation:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd navigation && sleep 5 && make navigation"
+    depends_on: 
+      ros2-build-navigation:
+        condition: service_completed_successfully
+    environment:
+      - DISPLAY=:0
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    volumes:
+      - .:/home/ros2
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /dev/dri/card0:/dev/dri/card0
+
+  gazebo:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd navigation && make simulation"
+    depends_on: 
+      ros2-build-navigation:
+        condition: service_completed_successfully
+    environment:
+      - DISPLAY=:0
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    volumes:
+      - .:/home/ros2
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /dev/dri/card0:/dev/dri/card0
+
+
+  ugv:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd navigation && sleep 10 && make planning"
+    depends_on:
+      ros2-build-navigation:
+        condition: service_completed_successfully
+    environment:
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    volumes:
+      - .:/home/ros2
+
+
+  ros2-build-planning:
+    image: demo
+    command: -c "cd planning && make build"
+    volumes:
+      - .:/home/ros2
+
+  planning:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd planning && make run"
+    depends_on:
+      ros2-build-planning:
+        condition: service_completed_successfully
+    environment:
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros2/fastrtps-profile.xml
+    volumes:
+      - .:/home/ros2
+
+  webserver:
+    image: demo
+    network_mode: host
+    restart: unless-stopped
+    command: -c "cd planning && make webserver"
+    volumes:
+      - .:/home/ros2
+
+networks: 
+  default:
+    name: demo
+    external: true
